@@ -1,0 +1,11 @@
+common-service:
+  url: http://localhost:8386
+
+eureka-server:
+  url: http://localhost:8061
+
+config-server:
+  url: http://localhost:8088
+
+gateway-service:
+  url: http://localhost:9999

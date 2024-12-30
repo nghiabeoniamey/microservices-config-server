@@ -1,0 +1,111 @@
+server:
+  port: 5000
+
+eureka:
+  server:
+    eviction-interval-timer-in-ms: 1000
+  renewalPercentThreshold: 0.85
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka
+  instance:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){blue} %clr([%X{traceId:-},%X{spanId:-}]){cyan} %clr(${LOG_LEVEL_PATTERN:-%5p}) %m%n"
+
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    username: ${DB_USERNAME:common}
+    password: ${DB_PASSWORD:common}
+  jpa:
+    properties:
+      hibernate:
+        globally_quoted_identifiers: false
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
+  sql:
+    init:
+      encoding: UTF-8
+
+  jackson:
+    time-zone: Asia/Ho_Chi_Minh
+
+management:
+  health:
+    defaults:
+      enabled: true
+    db:
+      enabled: true
+    discovery:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: email, profile
+            redirect-uri: {baseUrl}/oauth2/callback/{registrationId}
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+            scope: email, profile
+            redirect-uri: { baseUrl }/oauth2/callback/{registrationId}
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope: email, profile
+            redirect-uri: { baseUrl }/oauth2/callback/{registrationId}
+
+jwt:
+  secret: ${JWT_SECRET:rKFEVZaH+KAUSbnsxiRfFe8VEnMez8Bi7lF/aCXCsoVtRSaCs4cK9XJoiR1WqpcbhKbNIvB15n6lHv3HMnKLp7R0QQ0a8/DVnqGcm84XKE5j9P1MSk4vY1AspKuHnnb6c9gUtv8lHkJ8uinTas/cyQrgcrNQXCKQP10PVJw4OAx6}
+
+common-service:
+  url: http://localhost:8386
+
+eureka-server:
+  url: http://localhost:8061
+
+config-server:
+  url: http://localhost:8088
+
+gateway-service:
+  url: http://localhost:9999
+
+frontend:
+  url: http://localhost:9999

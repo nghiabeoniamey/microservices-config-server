@@ -1,0 +1,73 @@
+server:
+  port: 8386
+
+eureka:
+  server:
+    eviction-interval-timer-in-ms: 1000
+  renewalPercentThreshold: 0.85
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka
+  instance:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){blue} %clr([%X{traceId:-},%X{spanId:-}]){cyan} %clr(${LOG_LEVEL_PATTERN:-%5p}) %m%n"
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    username: ${DB_USERNAME:common}
+    password: ${DB_PASSWORD:common}
+  jpa:
+    properties:
+      hibernate:
+        globally_quoted_identifiers: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
+  sql:
+    init:
+      encoding: UTF-8
+
+  jackson:
+    time-zone: Asia/Ho_Chi_Minh
+
+management:
+  health:
+    defaults:
+      enabled: true
+    db:
+      enabled: true
+    discovery:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+
+db:
+  generator:
+    is-generated: ${GENERATE_DB:true}
+
+common-service:
+  url: http://localhost:8386
+
+eureka-server:
+  url: http://localhost:8061
+
+config-server:
+  url: http://localhost:8088
+
+gateway-service:
+  url: http://localhost:9999

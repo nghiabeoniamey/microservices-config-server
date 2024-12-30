@@ -1,0 +1,56 @@
+server:
+  port: 9999
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka
+  instance:
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 90
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){blue} %clr([%X{traceId:-},%X{spanId:-}]){cyan} %clr(${LOG_LEVEL_PATTERN:-%5p}) %m%n"
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  group-configs:
+    - group: gateway-service
+      paths-to-match: /gateway-service/**
+    - group: auth-service
+      paths-to-match: /auth-service/**
+    - group: common-service
+      paths-to-match: /common-service/**
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: common-service
+          uri: lb://COMMON-SERVICE
+          predicates:
+            - Path=/common-service/**
+          filters:
+            - RewritePath=/common-service/(?<segment>.*), /${segment}
+
+  output:
+    ansi:
+      enabled: always
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: health,sbom
+
+jwt:
+  secret: BvPHGM8C0ia4uOuxxqPD5DTbWC9F9TWvPStp3pb7ARo0oK2mJ3pd3YG4lxA9i8bj6OTbadwezxgeEByY
